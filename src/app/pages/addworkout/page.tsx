@@ -120,6 +120,7 @@ const checkLogin = async() => {
     }
 }
 const saveWorkout = async() => {
+  
     await checkLogin();
     console.log(workout);
 
@@ -300,8 +301,8 @@ imageFile : e.target.files![0]
     }
 </div>
 
-   <button onClick={(e) => {
-    addExerciseToWorkout(e)
+   <button onClick={() => {
+    addExerciseToWorkout()
    }}>
    Add Exercise
    </button>
@@ -309,10 +310,13 @@ imageFile : e.target.files![0]
          </div>
          <button
          onClick={(e) =>{
-            saveWorkout(e)
+            saveWorkout()
+            console.log()
          }}> AddWorkout</button>
     </div>
   )
 }
+// nothing just for git admin
+//added
 
 export default page
