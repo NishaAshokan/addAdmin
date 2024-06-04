@@ -149,7 +149,7 @@ for(let i=0; i <workout.exercises.length; i++){
     }
 }
 
-const response = await fetch('${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplans/workouts', {
+const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplans/workouts`, {
     method : 'POST',
     headers : {
         'content-type' : 'application/json',
@@ -159,9 +159,7 @@ const response = await fetch('${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplan
 
 });
 
-
-
-if (response.ok) {
+ if (response.ok) {
     const data = await response.json();
   console.log('Workout Registered Successfully', data);
   toast.success('workout  registered successfully', {
@@ -301,7 +299,7 @@ imageFile : e.target.files![0]
     }
 </div>
 
-   <button onClick={() => {
+   <button onClick={(e) => {
     addExerciseToWorkout()
    }}>
    Add Exercise
