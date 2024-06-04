@@ -117,6 +117,36 @@ const AddWorkoutPage = () => {
 //       throw new Error('Admin not authenticated');
 //     }
 //   };
+// const checkLogin = async () => {
+//     try {
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/admin/checkLogin`, {
+//         method: 'GET',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         credentials: 'include',
+//       });
+  
+//       if (response.ok) {
+//         console.log('Admin is authenticated');
+//       } else {
+//         const responseText = await response.text();
+//         console.error('Admin authentication failed:', response.status, responseText);
+//         toast.error('Admin authentication failed. Please log in again.', {
+//           position: 'top-center',
+//         });
+//         // Optional: Redirect to login page or show a login modal
+//         // window.location.href = '/adminauth/login';
+//       }
+//     } catch (error) {
+//       console.error('Error during authentication check:', error);
+//       toast.error('Error during authentication check. Please try again later.', {
+//         position: 'top-center',
+//       });
+//     }
+//   };
+
+
 const checkLogin = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/admin/checkLogin`, {
@@ -135,8 +165,7 @@ const checkLogin = async () => {
         toast.error('Admin authentication failed. Please log in again.', {
           position: 'top-center',
         });
-        // Optional: Redirect to login page or show a login modal
-        // window.location.href = '/adminauth/login';
+        // Optional: Handle the failed authentication (e.g., show a message to the user)
       }
     } catch (error) {
       console.error('Error during authentication check:', error);
@@ -145,10 +174,12 @@ const checkLogin = async () => {
       });
     }
   };
+  
   const saveWorkout = async () => {
     try {
       await checkLogin();
   
+      // Upload workout image (if available)
       if (workout.imageFile) {
         const imageURL = await uploadImage(workout.imageFile);
         if (imageURL) {
@@ -159,6 +190,7 @@ const checkLogin = async () => {
         }
       }
   
+      // Upload exercise images (if available)
       for (let i = 0; i < workout.exercises.length; i++) {
         const tempImg = workout.exercises[i].imageFile;
         if (tempImg) {
@@ -169,6 +201,7 @@ const checkLogin = async () => {
         }
       }
   
+      // Save the workout
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplans/workouts`, {
         method: 'POST',
         headers: {
