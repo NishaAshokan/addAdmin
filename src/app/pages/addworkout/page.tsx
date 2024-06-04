@@ -174,59 +174,64 @@ const checkLogin = async () => {
       });
     }
   };
-  const saveWorkout = async() => {
-  
+  const saveWorkout = async () => {
     await checkLogin();
     console.log(workout);
 
-    if(exercise.name == '' || exercise.description == '' || exercise.sets == 0 || exercise.reps == 0 || exercise.imageFile == null){
-        toast.error('please fill all the feilds', {
-            position : 'top-center'
-        })
-        return;
+    // Check if all exercises have the required fields filled
+    for (let i = 0; i < workout.exercises.length; i++) {
+        const exercise = workout.exercises[i];
+        if (exercise.name == '' || exercise.description == '' || exercise.sets == 0 || exercise.reps == 0 || exercise.imageFile == null) {
+            toast.error('Please fill all the fields', {
+                position: 'top-center'
+            });
+            return;
+        }
     }
 
-if(workout.imageFile){
-    const imageURL = await uploadImage(workout.imageFile);
-    if(imageURL){
-        setWorkout({
-            ...workout,
-            imageURL
-        })
+    // Handle workout image file
+    if (workout.imageFile) {
+        const imageURL = await uploadImage(workout.imageFile);
+        if (imageURL) {
+            setWorkout({
+                ...workout,
+                imageURL
+            });
+        }
     }
-}
 
-for(let i=0; i <workout.exercises.length; i++){
-    let tempimg = workout.exercises[i].imageFile
-    if(tempimg){
-        let imgURL = await uploadImage(tempimg);
-        workout.exercises[i].imageURL = imgURL;
+    // Handle each exercise image file
+    for (let i = 0; i < workout.exercises.length; i++) {
+        let tempimg = workout.exercises[i].imageFile;
+        if (tempimg) {
+            let imgURL = await uploadImage(tempimg);
+            workout.exercises[i].imageURL = imgURL;
+        }
     }
-}
 
-const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplans/workouts`, {
-    method : 'POST',
-    headers : {
-        'content-type' : 'application/json',
-    },
-    body: JSON.stringify(workout),
-    credentials: 'include'
+    // Send the workout data to the backend
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplans/workouts`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(workout),
+        credentials: 'include'
+    });
 
-});
-
- if (response.ok) {
-    const data = await response.json();
-  console.log('Workout Registered Successfully', data);
-  toast.success('workout  registered successfully', {
-    position: 'top-center',
-  });
-} else {
-  console.error('workout registration failed:', response.statusText);
-  toast.error(' workout Registration failed', {
-    position: 'top-center',
-  });
-}
-}
+    if (response.ok) {
+        const data = await response.json();
+        console.log('Workout Registered Successfully', data);
+        toast.success('Workout registered successfully', {
+            position: 'top-center',
+        });
+    } else {
+        console.error('Workout registration failed:', response.statusText);
+        toast.error('Workout registration failed', {
+            position: 'top-center',
+        });
+    }
+};
 
 
 //   const saveWorkout = async () => {
@@ -764,3 +769,65 @@ export default AddWorkoutPage;
 // //added
 
 // export default page
+
+
+
+
+
+
+
+
+
+// const saveWorkout = async() => {
+  
+//     await checkLogin();
+//     console.log(workout);
+
+//     if(exercise.name == '' || exercise.description == '' || exercise.sets == 0 || exercise.reps == 0 || exercise.imageFile == null){
+//         toast.error('please fill all the feilds', {
+//             position : 'top-center'
+//         })
+//         return;
+//     }
+
+// if(workout.imageFile){
+//     const imageURL = await uploadImage(workout.imageFile);
+//     if(imageURL){
+//         setWorkout({
+//             ...workout,
+//             imageURL
+//         })
+//     }
+// }
+
+// for(let i=0; i <workout.exercises.length; i++){
+//     let tempimg = workout.exercises[i].imageFile
+//     if(tempimg){
+//         let imgURL = await uploadImage(tempimg);
+//         workout.exercises[i].imageURL = imgURL;
+//     }
+// }
+
+// const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplans/workouts`, {
+//     method : 'POST',
+//     headers : {
+//         'content-type' : 'application/json',
+//     },
+//     body: JSON.stringify(workout),
+//     credentials: 'include'
+
+// });
+
+//  if (response.ok) {
+//     const data = await response.json();
+//   console.log('Workout Registered Successfully', data);
+//   toast.success('workout  registered successfully', {
+//     position: 'top-center',
+//   });
+// } else {
+//   console.error('workout registration failed:', response.statusText);
+//   toast.error(' workout Registration failed', {
+//     position: 'top-center',
+//   });
+// }
+// }
