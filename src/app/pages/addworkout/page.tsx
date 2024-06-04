@@ -63,10 +63,10 @@ const AddWorkoutPage = () => {
       return;
     }
 
-    setWorkout({
-      ...workout,
-      exercises: [...workout.exercises, exercise],
-    });
+    setWorkout((prevWorkout) => ({
+      ...prevWorkout,
+      exercises: [...prevWorkout.exercises, exercise],
+    }));
 
     setExercise({
       name: '',
@@ -79,10 +79,10 @@ const AddWorkoutPage = () => {
   };
 
   const deleteExerciseFromWorkout = (index: number) => {
-    setWorkout({
-      ...workout,
-      exercises: workout.exercises.filter((_, i) => i !== index),
-    });
+    setWorkout((prevWorkout) => ({
+      ...prevWorkout,
+      exercises: prevWorkout.exercises.filter((_, i) => i !== index),
+    }));
   };
 
   const uploadImage = async (image: File) => {
@@ -114,59 +114,58 @@ const AddWorkoutPage = () => {
     });
 
     if (!response.ok) {
-      console.log('Admin not authenticated');
-      window.location.href = '/adminauth/login';
+      throw new Error('Admin not authenticated');
     }
   };
 
   const saveWorkout = async () => {
-    await checkLogin();
+    try {
+      await checkLogin();
 
-    if (workout.imageFile) {
-      const imageURL = await uploadImage(workout.imageFile);
-      if (imageURL) {
-        setWorkout((prevWorkout) => ({
-          ...prevWorkout,
-          imageURL,
-        }));
-      }
-    }
-
-    for (let i = 0; i < workout.exercises.length; i++) {
-      const tempImg = workout.exercises[i].imageFile;
-      if (tempImg) {
-        const imgURL = await uploadImage(tempImg);
-        if (imgURL) {
-          workout.exercises[i].imageURL = imgURL;
+      if (workout.imageFile) {
+        const imageURL = await uploadImage(workout.imageFile);
+        if (imageURL) {
+          setWorkout((prevWorkout) => ({
+            ...prevWorkout,
+            imageURL,
+          }));
         }
       }
-    }
 
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      window.location.href = '/signin';
-      return;
-    }
+      for (let i = 0; i < workout.exercises.length; i++) {
+        const tempImg = workout.exercises[i].imageFile;
+        if (tempImg) {
+          const imgURL = await uploadImage(tempImg);
+          if (imgURL) {
+            workout.exercises[i].imageURL = imgURL;
+          }
+        }
+      }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplans/workouts`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(workout),
-      credentials: 'include',
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Workout registered successfully', data);
-      toast.success('Workout registered successfully', {
-        position: 'top-center',
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplans/workouts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(workout),
+        credentials: 'include',
       });
-    } else {
-      console.error('Workout registration failed:', response.statusText);
-      toast.error('Workout registration failed', {
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Workout registered successfully', data);
+        toast.success('Workout registered successfully', {
+          position: 'top-center',
+        });
+      } else {
+        console.error('Workout registration failed:', response.statusText);
+        toast.error('Workout registration failed', {
+          position: 'top-center',
+        });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error while saving workout', {
         position: 'top-center',
       });
     }
@@ -275,6 +274,7 @@ const AddWorkoutPage = () => {
 };
 
 export default AddWorkoutPage;
+
 
 // import React from 'react'
 // import './addworkout.css'
