@@ -177,7 +177,7 @@ const checkLogin = async () => {
   
   const saveWorkout = async () => {
     try {
-      
+      //await checkLogin();
   
       // Upload workout image (if available)
       if (workout.imageFile) {
