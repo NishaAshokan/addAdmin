@@ -92,6 +92,7 @@ const SigninPage = () => {
         const data = await response.json();
         console.log('Admin login successful', data);
 
+        
         // Assuming the token is returned in the response data
         localStorage.setItem('authToken', data.token);
 
