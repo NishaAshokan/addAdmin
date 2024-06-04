@@ -104,24 +104,51 @@ const AddWorkoutPage = () => {
     }
   };
 
-  const checkLogin = async () => {
-    const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_API + '/admin/checkLogin', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
+//   const checkLogin = async () => {
+//     const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_API + '/admin/checkLogin', {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       credentials: 'include',
+//     });
 
-    if (!response.ok) {
-      throw new Error('Admin not authenticated');
+//     if (!response.ok) {
+//       throw new Error('Admin not authenticated');
+//     }
+//   };
+const checkLogin = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/admin/checkLogin`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+  
+      if (response.ok) {
+        console.log('Admin is authenticated');
+      } else {
+        const responseText = await response.text();
+        console.error('Admin authentication failed:', response.status, responseText);
+        toast.error('Admin authentication failed. Please log in again.', {
+          position: 'top-center',
+        });
+        // Optional: Redirect to login page or show a login modal
+        // window.location.href = '/adminauth/login';
+      }
+    } catch (error) {
+      console.error('Error during authentication check:', error);
+      toast.error('Error during authentication check. Please try again later.', {
+        position: 'top-center',
+      });
     }
   };
-
   const saveWorkout = async () => {
     try {
       await checkLogin();
-
+  
       if (workout.imageFile) {
         const imageURL = await uploadImage(workout.imageFile);
         if (imageURL) {
@@ -131,7 +158,7 @@ const AddWorkoutPage = () => {
           }));
         }
       }
-
+  
       for (let i = 0; i < workout.exercises.length; i++) {
         const tempImg = workout.exercises[i].imageFile;
         if (tempImg) {
@@ -141,7 +168,7 @@ const AddWorkoutPage = () => {
           }
         }
       }
-
+  
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplans/workouts`, {
         method: 'POST',
         headers: {
@@ -150,7 +177,7 @@ const AddWorkoutPage = () => {
         body: JSON.stringify(workout),
         credentials: 'include',
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         console.log('Workout registered successfully', data);
@@ -170,6 +197,60 @@ const AddWorkoutPage = () => {
       });
     }
   };
+  
+  
+//   const saveWorkout = async () => {
+//     try {
+//       await checkLogin();
+
+//       if (workout.imageFile) {
+//         const imageURL = await uploadImage(workout.imageFile);
+//         if (imageURL) {
+//           setWorkout((prevWorkout) => ({
+//             ...prevWorkout,
+//             imageURL,
+//           }));
+//         }
+//       }
+
+//       for (let i = 0; i < workout.exercises.length; i++) {
+//         const tempImg = workout.exercises[i].imageFile;
+//         if (tempImg) {
+//           const imgURL = await uploadImage(tempImg);
+//           if (imgURL) {
+//             workout.exercises[i].imageURL = imgURL;
+//           }
+//         }
+//       }
+
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplans/workouts`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(workout),
+//         credentials: 'include',
+//       });
+
+//       if (response.ok) {
+//         const data = await response.json();
+//         console.log('Workout registered successfully', data);
+//         toast.success('Workout registered successfully', {
+//           position: 'top-center',
+//         });
+//       } else {
+//         console.error('Workout registration failed:', response.statusText);
+//         toast.error('Workout registration failed', {
+//           position: 'top-center',
+//         });
+//       }
+//     } catch (error) {
+//       console.error('Error:', error);
+//       toast.error('Error while saving workout', {
+//         position: 'top-center',
+//       });
+//     }
+//   };
 
   return (
     <div className='formpage'>
