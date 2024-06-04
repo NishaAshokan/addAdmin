@@ -957,7 +957,7 @@ const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/workoutplan
         name='name'
         value={exercise.name}
         onChange={handleExerciseChange} />
-
+<></>
 <textarea 
 
         placeholder='Exercise Description'
