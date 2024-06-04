@@ -272,7 +272,7 @@ const AddWorkoutPage = () => {
     </div>
   );
 };
-
+//added
 export default AddWorkoutPage;
 
 
