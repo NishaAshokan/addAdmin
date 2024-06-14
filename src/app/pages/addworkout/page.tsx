@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 // import React, { useState, ChangeEvent } from 'react';
 // import './addworkout.css';
 // import { toast, ToastContainer } from 'react-toastify';
@@ -813,7 +813,7 @@ const uploadImage = async(image : File) => {
 const formData = new FormData();
 formData.append('myimage', image);
 
-const response = await fetch('${process.env.NEXT_PUBLIC_BACKEND_API}/image-upload/uploadimage', {
+const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_API+'/image-upload/uploadimage', {
     method: 'POST',
     body : formData,
 });
